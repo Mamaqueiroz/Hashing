@@ -300,6 +300,7 @@ void Pesquisa()
                                 //funcao
                                 //essa funcao vai me retornar um double que é a relevancia do arquivo
                                 //tem q organizar essa relevancia de algum modo
+                                //ISSO EU NAO SEI FAZER
                                 //do maior para o menor
                                 pal_bus[0] = '\0';//zera a palavra q eu estou buscando e parte para a  proxima
                                 j = 0;
