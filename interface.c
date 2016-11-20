@@ -22,7 +22,7 @@ int InterFace(char nomeArq[], t_elemento hashing[])
         return 0;
 }
 
-void DeixarMin(char nome[])
+void DeixarMin(char nome[]) //deixa todas as letras minúsculas
 {
         int i;
         for(i = 0; nome[i] != '\0'; i++)
@@ -246,7 +246,7 @@ void CriaIndiceInvertido(t_elemento hashing[], char nome[], int controle)
 
 //programa com coisas a mais a partir daqui
 void Mostrar()
-{
+{       //mostra os índices invertidos da palavra pesquisada
         FILE *ed;
         char item[21];
         int rept, arquivo;
@@ -254,9 +254,9 @@ void Mostrar()
         int *vetor;
         vetor = (int *) malloc(sizeof(int) * 6);
 
-        ed = fopen("Indice.txt", "r");
+        ed = fopen("Indice.txt", "r");//arquivo com índices
 
-        while(fscanf(ed,"%s", &item) != EOF)
+        while(fscanf(ed,"%s", &item) != EOF)//busca a palavra e imprime o índice
         {
                 if(strlen(item) > 1)
                 {
@@ -277,16 +277,7 @@ void Mostrar()
 
 void Pesquisa()
 {
-        //O que eu tenho q pesquisar para saber qual o mais relevante
-        //1.QUANTIDADE DE PALAVRAS QUE SAO DIFERENTES DENTRO DO ARQUIVO
-        //2.QUANTIDADE DE ARQUIVO
-        //3.QUANTIDADE DE VEZES Q A PALAVRA REPETE DENTRO DO ARQUIVO
-        //Isso tem que ser feito para o conjunto de arquivos dentro de entrada.txt
-
-        //SOLUÇAO
-        //1. ACESSA O ARQUIVO DO INDICE GERADO(teste.txt) E PROCURA TODOS OS 1, 2, ... , N DENTRO DELE
-        //2. PRIMEIRA LINHA DO ARQUIVO ENTRADA TE DAR ISSO
-        //3. COM O ARQUIVO DE REFERENCIA DA PRA FAZER ISSO COM A  TESTE.TXT
+        //verificar em qual arquivo está a palavra desejada
 
         FILE *fp;
 
@@ -346,7 +337,7 @@ void Pesquisa()
         }
         fclose(fp);
         printf("A palavra buscada esta nos arquivos\n");
-        for(i = 0; i < N; i++ )
+        for(i = 0; i < N; i++ ) //imprime o nome do arquivo em que se encontra a palavra
         {
                 if(vetor[i] >= 0.25)
                 {
@@ -367,7 +358,7 @@ void Pesquisa()
 }
 
 double relev(char nome[], int n, int N, char nome_arq[])
-{
+{       //verifica quantas palavras o arquivo possui e retorna o valor para o cálculo de relevância
         FILE *fp;
         int qnt = 0;
         char palavra[21];
@@ -391,7 +382,7 @@ double relev(char nome[], int n, int N, char nome_arq[])
 }
 
 double numeroDePalavrasInd(int n)
-{
+{       //verifica quantas palavras diferentes em cada arquivo
         FILE *fp;
         char busca[21];
         int referencia = 0;
