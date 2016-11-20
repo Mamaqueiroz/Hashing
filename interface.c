@@ -47,7 +47,7 @@ void CriarArquivo(t_elemento hashing[])//cria o arquivo com todos as palavras
 {
         FILE *ls;
         t_elemento * novo = (t_elemento *) malloc(sizeof(t_elemento));
-        ls = fopen("teste.txt", "a+");
+        ls = fopen("Indice.txt", "w");
 
         int i;
         for(i = 0; i < 26; i++)//vai percorrer todo o hashing
@@ -250,23 +250,35 @@ void Mostrar()
         FILE *ed;
         char item[21];
         int rept, arquivo;
+        int i;
+        int *vetor;
+        vetor = (int *) malloc(sizeof(int) * 6);
 
-        ed = fopen("teste.txt", "r");
+        ed = fopen("Indice.txt", "r");
 
-        while(fscanf(ed,"%s", item) != EOF)
+        while(fscanf(ed,"%s", &item) != EOF)
         {
-                printf("%s ", item);
-                while(fscanf(ed, "%d %d", rept, arquivo))
+                if(strlen(item) > 1)
                 {
-                        printf("%d %d ", rept,arquivo);
+                        printf("\n%s ", item);
+                }
+                else
+                {
+                        if(item[0] >= 97)
+                        {
+                                printf("\n%s", item);
+                        }
+                        else printf("%s ", item);
                 }
         }
+        printf("\n");
+        fclose(ed);
 }
 
 void Pesquisa()
 {
         //O que eu tenho q pesquisar para saber qual o mais relevante
-        //1. QUANTIDADE DE PALAVRAS QUE SAO DIFERENTES DENTRO DO ARQUIVO
+        //1.QUANTIDADE DE PALAVRAS QUE SAO DIFERENTES DENTRO DO ARQUIVO
         //2.QUANTIDADE DE ARQUIVO
         //3.QUANTIDADE DE VEZES Q A PALAVRA REPETE DENTRO DO ARQUIVO
         //Isso tem que ser feito para o conjunto de arquivos dentro de entrada.txt
@@ -276,17 +288,37 @@ void Pesquisa()
         //2. PRIMEIRA LINHA DO ARQUIVO ENTRADA TE DAR ISSO
         //3. COM O ARQUIVO DE REFERENCIA DA PRA FAZER ISSO COM A  TESTE.TXT
 
+        FILE *fp;
+
+        fp = fopen("entrada.txt", "r"); // abertura da entrada para saber a quantidade de arquivos
+
+        int N, n = 0;//o N grande vai ser o numero de vezes q tem q repetir o processo de calculo da relevancia
+
+        fscanf(fp,"%d", &N);//CAptura a primeira linha e ja fechar
+
 
         char busca[101];
         char pal_bus[21];
         int i, j = 0;
+        double * vetor;
+        double relevancia = 0;
+        int k;
+        char arquivo_lei[21];
+        int print = 0;
 
-        scanf("%[^\n]s", busca);// ler a busca q a pessoa digitar, mais de uma palavra
+        vetor = (double*) malloc(sizeof(double) * N);// vetor dinamico de inteiros
+        for(i = 1; i <= N; i++)//calcula a quantidade de palavras diferentes
+        {
+                vetor[i-1] = numeroDePalavrasInd(i);
+        }
         getchar();
+        scanf("%[^\n]s", busca);// ler a busca q a pessoa digitar, mais de uma palavra
+
         //separar as palavras
 
-        while(arquivo <= qnt_arquivo)// ira repetir o processo para a quantidade x de arquivos
+        for(n = 1, k = 0; n <= N; n++, k++)//Repetição da quantidade de arquivos q tiver
         {
+                fscanf(fp,"%s", arquivo_lei);
                 for(i = 0; busca[i] != '\0'; i++)// ira separar as palavras so q tem q ser executado isso para cada arquivo
                 {
                         if(busca[i] != ' ')
@@ -297,15 +329,96 @@ void Pesquisa()
                         else
                         {
                                 pal_bus[j] = '\0';// nesse momento a primeira palavra é encontrada
-                                //funcao
-                                //essa funcao vai me retornar um double que é a relevancia do arquivo
-                                //tem q organizar essa relevancia de algum modo
-                                //ISSO EU NAO SEI FAZER
-                                //do maior para o menor
+                                relevancia += relev(pal_bus,n, N,arquivo_lei);
                                 pal_bus[0] = '\0';//zera a palavra q eu estou buscando e parte para a  proxima
                                 j = 0;
 
                         }
                 }
+                //se so buscar uma palavra tem q fazer toda vez apos o loop
+                pal_bus[j] = '\0';// nesse momento a primeira palavra é encontrada
+                relevancia += relev(pal_bus,n, N,arquivo_lei);
+                pal_bus[0] = '\0';//zera a palavra q eu estou buscando e parte para a  proxima
+                j = 0;
+                vetor[k] = (1/vetor[k]) * relevancia;
+                relevancia = 0;
+
         }
+        fclose(fp);
+        printf("A palavra buscada esta nos arquivos\n");
+        for(i = 0; i < N; i++ )
+        {
+                if(vetor[i] >= 0.25)
+                {
+                        print++;
+                        printf("arquivo%d.txt\n", i+1);
+                }
+        }
+        if(print == 0)
+        {
+                for(i = 0; i < N; i++ )
+                {
+                        if(vetor[i] > 0.0)
+                        {
+                                printf("arquivo%d.txt\n", i+1);
+                        }
+                }
+        }
+}
+
+double relev(char nome[], int n, int N, char nome_arq[])
+{
+        FILE *fp;
+        int qnt = 0;
+        char palavra[21];
+        char aux[21];
+
+
+        fp = fopen(nome_arq,"r");
+
+        while(!feof(fp))
+        {
+                fscanf(fp,"%s", palavra);
+                if(strlen(palavra) > 1)
+                {
+                        if(!strcmp(palavra,nome))
+                        {
+                                qnt++;
+                        }
+                }
+        }
+        return qnt * (log(N) / N);
+}
+
+double numeroDePalavrasInd(int n)
+{
+        FILE *fp;
+        char busca[21];
+        int referencia = 0;
+        int arquivo;
+        double cont = 0;
+
+        fp = fopen("Indice.txt", "r");
+
+        while(fscanf(fp,"%s",busca) != EOF)
+        {
+                if(strlen(busca) == 1)
+                {
+                        if(referencia == 1)
+                        {
+                                arquivo = atoi(busca);
+                                if(arquivo == n)
+                                {
+                                        cont++;
+                                }
+                                referencia = 0;
+                        }
+                        else
+                        {
+                                referencia++;
+                        }
+                }
+        }
+        fclose(fp);
+        return cont;
 }

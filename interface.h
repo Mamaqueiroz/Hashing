@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct elemento
 {
@@ -20,3 +21,5 @@ void DeixarMin(char nome[]);
 //programa com coisas a mais a partir daqui
 void Mostrar();
 void Pesquisa();
+double relev(char nome[], int n, int N, char nome_arq[]);
+double numeroDePalavrasInd(int n);
